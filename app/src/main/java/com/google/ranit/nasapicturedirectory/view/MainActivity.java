@@ -4,13 +4,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import com.google.ranit.nasapicturedirectory.R;
 import com.google.ranit.nasapicturedirectory.data.DataManager;
-import com.google.ranit.nasapicturedirectory.model.Image;
-
-import java.util.Collection;
+import com.google.ranit.nasapicturedirectory.utils.Response;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
-    private Collection<Image> jsonData;
+    private Response jsonFetchingResponse;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -20,6 +18,6 @@ public class MainActivity extends AppCompatActivity {
         // Get Manager Instance
         DataManager managerInstance = DataManager.getInstance();
 
-        jsonData = managerInstance.parseJsonData();
+        jsonFetchingResponse = managerInstance.parseJsonData();
     }
 }

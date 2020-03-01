@@ -6,6 +6,8 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.google.ranit.nasapicturedirectory.model.Image;
 import com.google.ranit.nasapicturedirectory.utils.GlobalUtilityClass;
+import com.google.ranit.nasapicturedirectory.utils.Response;
+import com.google.ranit.nasapicturedirectory.utils.Status;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -20,6 +22,7 @@ import java.util.Collection;
 public class DataManager {
     private static final String FILE_NAME = "data.json";
     private Collection<Image> responseData;
+    private Response response;
 
     private static DataManager instance;
 
@@ -35,10 +38,16 @@ public class DataManager {
      * This method does the following:
      * 1. Parse JSON Data from assets folder using GSON
      * 2. Store the JSON response into a Collection<Image> object
-     * 3. Return the parsed JSON response
+     * 3. Return the Response Object
+     *
+     * NOTE: Initially - Data [null] & Status [LOADING]
+     *       Successful parsing of Data - Data [Collection<Image>] & Status [SUCCESS]
+     *       Error - Data [null] & Status [ERROR]
      */
-    public Collection<Image> parseJsonData() {
+    public Response parseJsonData() {
         try {
+            response = new Response(null, Status.LOADING);
+
             AssetManager assetManager = GlobalUtilityClass.context.getAssets();
             InputStream stream = assetManager.open(FILE_NAME);
 
@@ -47,10 +56,15 @@ public class DataManager {
 
             Type collectionType = new TypeToken<Collection<Image>>(){}.getType();
             responseData = gson.fromJson(reader, collectionType);
+
+            response.setJsonImageData(responseData);
+            response.setStatus(Status.SUCCESS);
+
         } catch (IOException e) {
+            response.setStatus(Status.ERROR);
             e.printStackTrace();
         }
-        return responseData;
+        return response;
     }
 
 }
