@@ -7,6 +7,7 @@ import com.google.gson.reflect.TypeToken;
 import com.google.ranit.nasapicturedirectory.model.Image;
 import com.google.ranit.nasapicturedirectory.utils.GlobalUtilityClass;
 import com.google.ranit.nasapicturedirectory.utils.Response;
+import com.google.ranit.nasapicturedirectory.utils.SortCollectionBasedOnDate;
 import com.google.ranit.nasapicturedirectory.utils.Status;
 
 import java.io.IOException;
@@ -65,6 +66,18 @@ public class DataManager {
             e.printStackTrace();
         }
         return response;
+    }
+
+    /*
+     * This method does the following:
+     * 1. Receives the sorted list from SortCollectionBasedOnDate utility class
+     * 2. Returns the sorted list
+     */
+    public Collection<Image> sortListBasedOnDate() {
+        Collection<Image> sortedList = null;
+        SortCollectionBasedOnDate sortedCollection = new SortCollectionBasedOnDate(responseData);
+        sortedList = sortedCollection.getSortedImageCollection();
+        return sortedList;
     }
 
 }
