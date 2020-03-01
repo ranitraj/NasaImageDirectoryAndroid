@@ -101,4 +101,11 @@ public class DataManager {
         return imageUrlMap;
     }
 
+    /*
+     * Remove Data Manager Instance
+     */
+    public void cleanManager() {
+        instance = null;
+    }
+
 }

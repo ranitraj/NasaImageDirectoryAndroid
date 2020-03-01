@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">NASA Picture Directory</string>
+    <string name="image_thumbnail">Image Thumbnail</string>
 </resources>
