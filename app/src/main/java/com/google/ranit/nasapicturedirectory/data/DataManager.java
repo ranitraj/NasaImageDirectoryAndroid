@@ -5,6 +5,7 @@ import android.content.res.AssetManager;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.google.ranit.nasapicturedirectory.model.Image;
+import com.google.ranit.nasapicturedirectory.model.ImageUrl;
 import com.google.ranit.nasapicturedirectory.utils.GlobalUtilityClass;
 import com.google.ranit.nasapicturedirectory.utils.Response;
 import com.google.ranit.nasapicturedirectory.utils.SortCollectionBasedOnDate;
@@ -16,6 +17,7 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.lang.reflect.Type;
 import java.util.Collection;
+import java.util.TreeMap;
 
 /*
  * Singleton Class
@@ -24,6 +26,8 @@ public class DataManager {
     private static final String FILE_NAME = "data.json";
     private Collection<Image> responseData;
     private Response response;
+    private Collection<Image> sortedList;
+    private TreeMap<Integer, ImageUrl> imageUrlMap;
 
     private static DataManager instance;
 
@@ -74,10 +78,27 @@ public class DataManager {
      * 2. Returns the sorted list
      */
     public Collection<Image> sortListBasedOnDate() {
-        Collection<Image> sortedList = null;
         SortCollectionBasedOnDate sortedCollection = new SortCollectionBasedOnDate(responseData);
         sortedList = sortedCollection.getSortedImageCollection();
         return sortedList;
+    }
+
+    /*
+     * This method does the following:
+     * 1. Creates a new TreeMap<Integer, ImageUrl>
+     * 2. Assigns unique id to every ImageUrl object
+     * 3. Returns the TreeMap object
+     */
+    public TreeMap<Integer, ImageUrl> treeMapOfImageUrlData() {
+        imageUrlMap = new TreeMap<>();
+        Collection<Image> images = sortedList;
+        int imageId = 0;
+
+        for (Image imageObject : images) {
+            imageUrlMap.put(imageId, new ImageUrl(imageObject.getUrl(), imageObject.getHdUrl()));
+            imageId++;
+        }
+        return imageUrlMap;
     }
 
 }
