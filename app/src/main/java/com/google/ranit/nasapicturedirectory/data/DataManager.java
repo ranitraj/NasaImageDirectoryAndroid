@@ -20,7 +20,7 @@ import java.util.Collection;
 import java.util.TreeMap;
 
 /*
- * Singleton Class
+ * Singleton Class which manages all data
  */
 public class DataManager {
     private static final String FILE_NAME = "data.json";
@@ -35,8 +35,11 @@ public class DataManager {
     private DataManager() {
     }
 
-    public static synchronized DataManager getInstance() {
-        return (instance == null) ? new DataManager() : instance;
+    public static DataManager getInstance() {
+        if (instance == null) {
+            instance = new DataManager();
+        }
+        return instance;
     }
 
     /*
@@ -59,7 +62,8 @@ public class DataManager {
             Gson gson = new Gson();
             Reader reader = new InputStreamReader(stream);
 
-            Type collectionType = new TypeToken<Collection<Image>>(){}.getType();
+            Type collectionType = new TypeToken<Collection<Image>>() {
+            }.getType();
             responseData = gson.fromJson(reader, collectionType);
 
             response.setJsonImageData(responseData);
@@ -77,10 +81,9 @@ public class DataManager {
      * 1. Receives the sorted list from SortCollectionBasedOnDate utility class
      * 2. Returns the sorted list
      */
-    public Collection<Image> sortListBasedOnDate() {
+    public void sortListBasedOnDate() {
         SortCollectionBasedOnDate sortedCollection = new SortCollectionBasedOnDate(responseData);
         sortedList = sortedCollection.getSortedImageCollection();
-        return sortedList;
     }
 
     /*
@@ -98,6 +101,20 @@ public class DataManager {
             imageUrlMap.put(imageId, new ImageUrl(imageObject.getUrl(), imageObject.getHdUrl()));
             imageId++;
         }
+        return imageUrlMap;
+    }
+
+    /*
+     * This method returns the Sorted Collection
+     */
+    public Collection<Image> getSortedList() {
+        return sortedList;
+    }
+
+    /*
+     * This method returns the ImageUrl TreeMap
+     */
+    public TreeMap<Integer, ImageUrl> getImageUrlMap() {
         return imageUrlMap;
     }
 

@@ -1,5 +1,7 @@
 package com.google.ranit.nasapicturedirectory.view;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,27 +18,26 @@ import com.google.ranit.nasapicturedirectory.utils.GlobalUtilityClass;
 import java.util.TreeMap;
 
 public class ImageThumbnailAdapter extends RecyclerView.Adapter<ImageThumbnailAdapter.ImageThumbnailViewHolder> {
-    private LayoutInflater inflater;
+    private Activity activity;
     private TreeMap<Integer, ImageUrl> imageUrlTreeMap;
 
-    public ImageThumbnailAdapter(TreeMap<Integer, ImageUrl> imageUrlTreeMap) {
+    ImageThumbnailAdapter(Activity activity,
+                          TreeMap<Integer, ImageUrl> imageUrlTreeMap) {
+        this.activity = activity;
         this.imageUrlTreeMap = imageUrlTreeMap;
     }
 
-    public static class ImageThumbnailViewHolder extends RecyclerView.ViewHolder {
+     static class ImageThumbnailViewHolder extends RecyclerView.ViewHolder {
         private ImageView thumbnailImageView;
 
-        public ImageThumbnailViewHolder(@NonNull View itemView) {
+
+        private ImageThumbnailViewHolder(@NonNull View itemView) {
             super(itemView);
             thumbnailImageView = itemView.findViewById(R.id.image_thumbnail);
         }
 
-        public ImageView getThumbnailImageView() {
+        private ImageView getThumbnailImageView() {
             return thumbnailImageView;
-        }
-
-        public void setThumbnailImageView(ImageView thumbnailImageView) {
-            this.thumbnailImageView = thumbnailImageView;
         }
     }
 
@@ -52,11 +53,29 @@ public class ImageThumbnailAdapter extends RecyclerView.Adapter<ImageThumbnailAd
     public void onBindViewHolder(@NonNull ImageThumbnailViewHolder holder, int position) {
         GlideHelper.loadThumbnailImage(holder.getThumbnailImageView(),
                 imageUrlTreeMap.get(position).getImageUrl());
+        holder.getThumbnailImageView().setOnClickListener(new OnImageClickListener(position));
     }
 
     @Override
     public int getItemCount() {
         int treeMapSize = imageUrlTreeMap.size();
         return Math.max(treeMapSize, 0);
+    }
+
+    // Click Listener for View Holder
+    class OnImageClickListener implements View.OnClickListener {
+        int position;
+
+        private OnImageClickListener(int position) {
+            this.position = position;
+        }
+
+        @Override
+        public void onClick(View v) {
+            // Launch FullscreenImageActivity
+            Intent intent = new Intent(activity, FullscreenImageActivity.class);
+            intent.putExtra("position", position);
+            activity.startActivity(intent);
+        }
     }
 }

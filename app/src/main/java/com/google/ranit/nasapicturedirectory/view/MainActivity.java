@@ -6,45 +6,46 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
+import android.view.View;
+import android.widget.TextView;
 
 import com.google.ranit.nasapicturedirectory.R;
 import com.google.ranit.nasapicturedirectory.data.DataManager;
-import com.google.ranit.nasapicturedirectory.model.Image;
 import com.google.ranit.nasapicturedirectory.model.ImageUrl;
 import com.google.ranit.nasapicturedirectory.utils.Constants;
 import com.google.ranit.nasapicturedirectory.utils.GridItemDecorator;
 import com.google.ranit.nasapicturedirectory.utils.Response;
 import com.google.ranit.nasapicturedirectory.utils.Status;
 
-import java.util.Collection;
 import java.util.TreeMap;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
 
-    DataManager managerInstance;
-    private Response jsonFetchingResponse;
-    private Collection<Image> sortedImageCollection;
+    private DataManager managerInstance;
     private TreeMap<Integer, ImageUrl> imageUrlTreeMap;
 
     private RecyclerView recyclerView;
-    private ImageThumbnailAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        recyclerView = findViewById(R.id.recycler_view);
+        TextView errorMessageTextView = findViewById(R.id.error_text_view);
 
         // Get Manager Instance
         managerInstance = DataManager.getInstance();
-        jsonFetchingResponse = managerInstance.parseJsonData();
+        Response jsonFetchingResponse = managerInstance.parseJsonData();
 
         if (jsonFetchingResponse.getStatus() == Status.SUCCESS) {
-            sortedImageCollection = managerInstance.sortListBasedOnDate();
+            managerInstance.sortListBasedOnDate();
             imageUrlTreeMap = managerInstance.treeMapOfImageUrlData();
             prepareRecyclerView();
-        } else if (jsonFetchingResponse.getStatus() == Status.ERROR) {
 
+        } else if (jsonFetchingResponse.getStatus() == Status.ERROR) {
+            recyclerView.setVisibility(View.GONE);
+            errorMessageTextView.setVisibility(View.VISIBLE);
         }
     }
 
@@ -56,8 +57,7 @@ public class MainActivity extends AppCompatActivity {
 
     // Prepare Recycler View
     private void prepareRecyclerView() {
-        recyclerView = findViewById(R.id.recycler_view);
-        adapter = new ImageThumbnailAdapter(imageUrlTreeMap);
+        ImageThumbnailAdapter adapter = new ImageThumbnailAdapter(MainActivity.this, imageUrlTreeMap);
         RecyclerView.LayoutManager layoutManager = new GridLayoutManager(this, Constants.SPAN_COUNT);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());

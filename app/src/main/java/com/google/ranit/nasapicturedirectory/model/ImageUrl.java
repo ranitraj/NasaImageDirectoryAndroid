@@ -1,7 +1,5 @@
 package com.google.ranit.nasapicturedirectory.model;
 
-import com.google.gson.annotations.SerializedName;
-
 public class ImageUrl {
     private String imageUrl;
     private String hdImageUrl;
